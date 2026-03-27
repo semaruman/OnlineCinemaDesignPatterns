@@ -15,6 +15,9 @@ namespace OnlineCinemaDesignPatterns.Models
 
         public List<User> Subscribers { get; set;  } = new List<User>();
 
+        //навигационное свойство
+        public Cinema Cinema { get; set; }
+
         public void Notificate(INotification notification)
         {
             foreach (var subscriber in Subscribers)
