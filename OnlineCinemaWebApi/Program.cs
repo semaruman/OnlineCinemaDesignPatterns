@@ -27,7 +27,7 @@ app.MapGet("/users/{id:int}/notifications", GetUserNotifications);
 app.MapPost("/users/{id:int}/subscribe/{serialId:int}", SubscribeUser);
 app.MapPost("/users/{id:int}/unsubscribe/{serialId:int}", UnsubscribeUser);
 app.MapPost("/users/add", AddUser);
-app.MapPost();
+app.MapPost("/serials/{serialId:int}/addnotification", AddNotification);
 app.Run();
 
 
@@ -44,6 +44,7 @@ GET: /users/id/notifications - получение уведомлений пол�
 POST: /users/id/subscribe/serialId - пидписаться на сериал
 POST: /users/id/unsubscribe/serialId - отписаться от сериала
 POST: /users/add - добавление пользователя
+POST: /serials/id/addnotification - добавление уведомления для конкретного сериала
 ";
     var data = new
     {
@@ -189,8 +190,7 @@ IResult AddUser([FromBody] User user)
 
 IResult AddNotification(
     int serialId, 
-    [FromBody]List<string> notificationTypes,
-    [FromBody]string text
+    [FromBody] AddNotificationRequest bodyRequest
     )
 {
     var serial = serials.FirstOrDefault(x => x.Id == serialId);
@@ -199,9 +199,9 @@ IResult AddNotification(
     {
         return Results.BadRequest(new { message = "Сериал не найден" });
     }
-
+    string text = bodyRequest.Text;
     INotification notification = null;
-    foreach (string type in notificationTypes)
+    foreach (string type in bodyRequest.NotificationTypes)
     {
         if (type == "advert")
         {
@@ -239,4 +239,11 @@ IResult AddNotification(
 
     serial.Notificate(notification);
     return Results.Ok(new {message = "Уведомление создано успешно"});
+}
+
+
+public class AddNotificationRequest
+{
+    public List<string> NotificationTypes { get; set; } = new List<string>();
+    public string Text { get; set; } = string.Empty;
 }
