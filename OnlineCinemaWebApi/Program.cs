@@ -21,6 +21,7 @@ app.MapGet("/serials/{id:int}/subscribers", GetSerialSubscribers);
 app.MapGet("/users", GetUsers);
 app.MapGet("/users/{id:int}", GetUserInfo);
 app.MapGet("/users/{id:int}/serials", GetUserSerials);
+app.MapGet("/users/{id:int}/notifications", GetUserNotifications);
 app.MapGet("/users/add", AddUser);
 
 app.Run();
@@ -35,6 +36,7 @@ GET: /serials/id/subscribers - получение подписчиков сир�
 GET: /users - получение всех пользователей
 GET: /users/id - получение информации о конкретном пользователе
 GET: /users/id/serials - получение сериалов пользователя
+GET: /users/id/notifications - получение уведомлений пользователя
 GET: /users/add - добавление пользователя
 ";
     var data = new
@@ -107,6 +109,20 @@ IResult GetUserSerials(int id)
     else
     {
         return Results.Ok(user.Serials);
+    }
+}
+
+IResult GetUserNotifications(int id)
+{
+    var user = users.FirstOrDefault(x => x.Id == id);
+
+    if (user == null)
+    {
+        return Results.BadRequest(new { message = "Пользователь не найден" });
+    }
+    else
+    {
+        return Results.Ok(user.Mail.Select(n => n.Send()));
     }
 }
 
