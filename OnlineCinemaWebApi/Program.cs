@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OnlineCinemaDesignPatternsConsole.Models;
+using OnlineCinemaDesignPatternsConsole.Models.Notifications;
 
 var serials = new SortedSet<Serial>();
 
@@ -26,7 +27,7 @@ app.MapGet("/users/{id:int}/notifications", GetUserNotifications);
 app.MapPost("/users/{id:int}/subscribe/{serialId:int}", SubscribeUser);
 app.MapPost("/users/{id:int}/unsubscribe/{serialId:int}", UnsubscribeUser);
 app.MapPost("/users/add", AddUser);
-
+app.MapPost();
 app.Run();
 
 
@@ -184,4 +185,58 @@ IResult AddUser([FromBody] User user)
         users.Add(user);
         return Results.Ok(new { message = $"Пользователь {user.FullName} добавлен" });
     }
+}
+
+IResult AddNotification(
+    int serialId, 
+    [FromBody]List<string> notificationTypes,
+    [FromBody]string text
+    )
+{
+    var serial = serials.FirstOrDefault(x => x.Id == serialId);
+
+    if (serial == null)
+    {
+        return Results.BadRequest(new { message = "Сериал не найден" });
+    }
+
+    INotification notification = null;
+    foreach (string type in notificationTypes)
+    {
+        if (type == "advert")
+        {
+            notification = new AdvertDecorator(text, notification);
+        }
+        else if (type == "email")
+        {
+            notification = new EmailDecorator(text, notification);
+
+        }
+        else if (type == "sale")
+        {
+            notification = new SaleDecorator(text, notification);
+
+        }
+        else if (type == "sms")
+        {
+            notification = new SMSDecorator(text, notification);
+
+        }
+        else if (type == "trailer")
+        {
+            notification = new TrailerDecorator(text, notification);
+        }
+        else
+        {
+            return Results.BadRequest(new { message = $"Тип уведомления '{type}' отсутствует" });
+        }
+    }
+
+    if (notification == null)
+    {
+        return Results.BadRequest(new { message = "Уведомление отсутствует" });
+    }
+
+    serial.Notificate(notification);
+    return Results.Ok(new {message = "Уведомление создано успешно"});
 }
