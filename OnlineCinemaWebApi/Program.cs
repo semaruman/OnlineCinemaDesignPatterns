@@ -23,7 +23,8 @@ app.MapGet("/users", GetUsers);
 app.MapGet("/users/{id:int}", GetUserInfo);
 app.MapGet("/users/{id:int}/serials", GetUserSerials);
 app.MapGet("/users/{id:int}/notifications", GetUserNotifications);
-app.MapGet("/users/add", AddUser);
+app.MapPost("/users/{id:int}/subscribe/{serialId:int}", SubscribeUser);
+app.MapPost("/users/add", AddUser);
 
 app.Run();
 
@@ -124,6 +125,27 @@ IResult GetUserNotifications(int id)
     else
     {
         return Results.Ok(user.Mail.Select(n => n.Send()));
+    }
+}
+
+IResult SubscribeUser(int id, int serialId)
+{
+    var user = users.FirstOrDefault(x => x.Id == id);
+    var serial = serials.FirstOrDefault(x => x.Id == id);
+
+    if (user == null)
+    {
+        return Results.BadRequest(new { message = "Пользователь не найден" });
+    }
+    else if (serial == null)
+    {
+        return Results.BadRequest(new { message = "Сериал не найден" });
+    }
+    else
+    {
+        serial.Subscribers.Add(user);
+        user.Serials.Add(serial);
+        return Results.Ok(new {message = $"Пользователь {user.FullName} подписался на сериал {serial.Name}"});
     }
 }
 
