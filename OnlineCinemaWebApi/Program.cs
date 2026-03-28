@@ -24,6 +24,7 @@ app.MapGet("/users/{id:int}", GetUserInfo);
 app.MapGet("/users/{id:int}/serials", GetUserSerials);
 app.MapGet("/users/{id:int}/notifications", GetUserNotifications);
 app.MapPost("/users/{id:int}/subscribe/{serialId:int}", SubscribeUser);
+app.MapPost("/users/{id:int}/unsubscribe/{serialId:int}", UnsubscribeUser);
 app.MapPost("/users/add", AddUser);
 
 app.Run();
@@ -39,7 +40,9 @@ GET: /users - получение всех пользователей
 GET: /users/id - получение информации о конкретном пользователе
 GET: /users/id/serials - получение сериалов пользователя
 GET: /users/id/notifications - получение уведомлений пользователя
-GET: /users/add - добавление пользователя
+POST: /users/id/subscribe/serialId - пидписаться на сериал
+POST: /users/id/unsubscribe/serialId - отписаться от сериала
+POST: /users/add - добавление пользователя
 ";
     var data = new
     {
@@ -146,6 +149,27 @@ IResult SubscribeUser(int id, int serialId)
         serial.Subscribers.Add(user);
         user.Serials.Add(serial);
         return Results.Ok(new {message = $"Пользователь {user.FullName} подписался на сериал {serial.Name}"});
+    }
+}
+
+IResult UnsubscribeUser(int id, int serialId)
+{
+    var user = users.FirstOrDefault(x => x.Id == id);
+    var serial = serials.FirstOrDefault(x => x.Id == id);
+
+    if (user == null)
+    {
+        return Results.BadRequest(new { message = "Пользователь не найден" });
+    }
+    else if (serial == null)
+    {
+        return Results.BadRequest(new { message = "Сериал не найден" });
+    }
+    else
+    {
+        serial.Subscribers.Remove(user);
+        user.Serials.Remove(serial);
+        return Results.Ok(new { message = $"Пользователь {user.FullName} отписался от сериала {serial.Name}" });
     }
 }
 
