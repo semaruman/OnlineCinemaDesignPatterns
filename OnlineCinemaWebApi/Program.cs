@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using OnlineCinemaDesignPatternsConsole.Models;
 
 var serials = new List<Serial>{
@@ -126,7 +127,7 @@ IResult GetUserNotifications(int id)
     }
 }
 
-IResult AddUser(User user)
+IResult AddUser([FromBody] User user)
 {
     if (user == null || string.IsNullOrEmpty(user.FullName))
     {
@@ -135,6 +136,6 @@ IResult AddUser(User user)
     else
     {
         users.Add(user);
-        return Results.Ok(new {message = $"Пользователь {user.FullName} добавлен"});
+        return Results.Ok(new { message = $"Пользователь {user.FullName} добавлен" });
     }
 }
