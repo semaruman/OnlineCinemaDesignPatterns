@@ -14,8 +14,6 @@ namespace OnlineCinemaDesignPatternsConsole.Models
 
         public List<Serial> Serials { get; set; } = new List<Serial>();
 
-        //навигационное свойство
-        public Cinema Cinema { get; set; }
 
         public void PrintMail()
         {
