@@ -129,7 +129,7 @@ public class Program
 
                 serial.Subscribers.Remove(user);
 
-                user.Serials = user.Serials.Where(s =>  s.Id != serialId).ToList();
+                user.Serials.Remove(serial);
 
                 Console.WriteLine($"{user.FullName}, Вы отписались от сериала {serial.Name}!");
 

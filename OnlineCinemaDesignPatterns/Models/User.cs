@@ -5,14 +5,14 @@ using System.Text;
 
 namespace OnlineCinemaDesignPatternsConsole.Models
 {
-    public class User
+    public class User : IComparable<User>
     {
 
         public int Id { get; set; }
         public string FullName { get; set; }
         public List<INotification> Mail { get; set; } = new List<INotification>();
 
-        public List<Serial> Serials { get; set; } = new List<Serial>();
+        public SortedSet<Serial> Serials { get; set; } = new SortedSet<Serial>();
 
 
         public void PrintMail()
@@ -28,6 +28,11 @@ namespace OnlineCinemaDesignPatternsConsole.Models
             Console.ResetColor();
         }
 
+        public override string ToString()
+        {
+            return $"{Id} - {FullName}";
+        }
+
         public override bool Equals(object? obj)
         {
             return Id == ((User)obj).Id;
@@ -35,12 +40,13 @@ namespace OnlineCinemaDesignPatternsConsole.Models
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id); 
+            return HashCode.Combine(Id);
         }
 
-        public override string ToString()
+        public int CompareTo(User? other)
         {
-            return $"{Id} - {FullName}";
+            if (other == null) return 1;
+            return Id.CompareTo(other.Id);
         }
     }
 }

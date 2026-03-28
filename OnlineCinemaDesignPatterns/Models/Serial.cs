@@ -5,7 +5,7 @@ using System.Text;
 
 namespace OnlineCinemaDesignPatternsConsole.Models
 {
-    public class Serial
+    public class Serial : IComparable<Serial>
     {
         public int Id { get; set; }
 
@@ -13,7 +13,7 @@ namespace OnlineCinemaDesignPatternsConsole.Models
 
         public string Description { get; set; } = string.Empty;
 
-        public List<User> Subscribers { get; set;  } = new List<User>();
+        public SortedSet<User> Subscribers { get; set;  } = new SortedSet<User>();
 
 
         public void Notificate(INotification notification)
@@ -27,6 +27,22 @@ namespace OnlineCinemaDesignPatternsConsole.Models
         public override string ToString()
         {
             return $"{Id} - {Name}. {Subscribers.Count} подписчиков. \n\t{Description}";
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Id == ((Serial)obj).Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id);
+        }
+
+        public int CompareTo(Serial? other)
+        {
+            if (other == null) return 1;
+            return Id.CompareTo(other.Id);
         }
     }
 }
