@@ -18,6 +18,7 @@ app.MapGet("/serials", GetSerials);
 app.MapGet("/serials/{id:int}", GetSerialInfo);
 app.MapGet("/serials/{id:int}/subscribers", GetSerialSubscribers);
 app.MapGet("/users", GetUsers);
+app.MapGet("/users/{id:int}/serials", GetUserSerials);
 
 app.Run();
 
@@ -29,6 +30,7 @@ GET: /serials - получение списка сериалов
 GET: /serials/id - получение информации о конкретном сериале
 GET: /serials/id/subscribers - получение подписчиков сириала
 GET: /users - получение всех пользователей
+GET: /users/id/serials - получение сериалов пользователя
 ";
     var data = new
     {
@@ -74,4 +76,18 @@ IResult GetSerialSubscribers(int id)
 IResult GetUsers()
 {
     return Results.Ok(users);
+}
+
+IResult GetUserSerials(int id)
+{
+    var user = users.FirstOrDefault(x => x.Id == id);
+
+    if (user == null)
+    {
+        return Results.BadRequest(new { message = "Пользователь не найден" });
+    }
+    else
+    {
+        return Results.Ok(user.Serials);
+    }
 }
