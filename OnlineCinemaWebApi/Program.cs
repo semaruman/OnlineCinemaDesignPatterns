@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineCinemaDesignPatternsConsole.Models;
 using OnlineCinemaDesignPatternsConsole.Models.Notifications;
 
+//иинициализация и заполнение данных (примерное, для проверки работоспособности)
 var serials = new SortedSet<Serial>();
 
 serials.Add(new Serial {Id = 1, Name = "Смешарики", Description = "Самый крутой сериал"});
@@ -12,6 +13,11 @@ serials.Add(new Serial { Id = 3, Name = "Шерлок", Description = "дете�
 var users = new SortedSet<User>();
 users.Add(new User { Id = 1, FullName = "Евлампий" });
 users.Add(new User { Id = 2, FullName = "Архиоп" });
+
+SubscribeUser(1, 1);
+SubscribeUser(2, 1);
+SubscribeUser(1, 3);
+// ------
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
@@ -46,10 +52,7 @@ POST: /users/id/unsubscribe/serialId - отписаться от сериала
 POST: /users/add - добавление пользователя
 POST: /serials/id/addnotification - добавление уведомления для конкретного сериала
 ";
-    var data = new
-    {
-        message = menu
-    };
+    var data = menu.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
     return Results.Ok(data);
 }
@@ -83,7 +86,7 @@ IResult GetSerialSubscribers(int id)
     }
     else
     {
-        return Results.Ok(serial.Subscribers);
+        return Results.Ok(serial.Subscribers.Select(u => u.ToString()));
     }
 }
 
@@ -115,7 +118,7 @@ IResult GetUserSerials(int id)
     }
     else
     {
-        return Results.Ok(user.Serials);
+        return Results.Ok(user.Serials.Select(s => s.ToString()));
     }
 }
 
@@ -136,7 +139,7 @@ IResult GetUserNotifications(int id)
 IResult SubscribeUser(int id, int serialId)
 {
     var user = users.FirstOrDefault(x => x.Id == id);
-    var serial = serials.FirstOrDefault(x => x.Id == id);
+    var serial = serials.FirstOrDefault(x => x.Id == serialId);
 
     if (user == null)
     {
