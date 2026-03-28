@@ -17,6 +17,7 @@ app.MapGet("/", IndexMethod);
 app.MapGet("/serials", GetSerials);
 app.MapGet("/serials/{id:int}", GetSerialInfo);
 app.MapGet("/serials/{id:int}/subscribers", GetSerialSubscribers);
+app.MapGet("/users", GetUsers);
 
 app.Run();
 
@@ -27,6 +28,7 @@ IResult IndexMethod()
 GET: /serials - получение списка сериалов
 GET: /serials/id - получение информации о конкретном сериале
 GET: /serials/id/subscribers - получение подписчиков сириала
+GET: /users - получение всех пользователей
 ";
     var data = new
     {
@@ -67,4 +69,9 @@ IResult GetSerialSubscribers(int id)
     {
         return Results.Ok(serial.Subscribers);
     }
+}
+
+IResult GetUsers()
+{
+    return Results.Ok(users);
 }
