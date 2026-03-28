@@ -15,6 +15,7 @@ var app = builder.Build();
 
 app.MapGet("/", IndexMethod);
 app.MapGet("/serials", GetSerials);
+app.MapGet("/serials/{id:int}", GetSerialInfo);
 
 app.Run();
 
@@ -39,4 +40,16 @@ IResult GetSerials()
     return Results.Ok(serials);
 }
 
+IResult GetSerialInfo(int id)
+{
+    var serial = serials.FirstOrDefault(x => x.Id == id);
 
+    if (serial == null)
+    {
+        return Results.BadRequest(new {message = "Сериал не найден"});
+    }
+    else
+    {
+        return Results.Ok(new { message = serial.ToString() });
+    }
+}
