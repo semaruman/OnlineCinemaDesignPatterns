@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OnlineCinemaDesignPatterns.Models
+namespace OnlineCinemaDesignPatternsConsole.Models
 {
     public class Cinema
     {

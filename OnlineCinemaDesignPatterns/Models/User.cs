@@ -1,9 +1,9 @@
-﻿using OnlineCinemaDesignPatterns.Models.Notifications;
+﻿using OnlineCinemaDesignPatternsConsole.Models.Notifications;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace OnlineCinemaDesignPatterns.Models
+namespace OnlineCinemaDesignPatternsConsole.Models
 {
     public class User
     {

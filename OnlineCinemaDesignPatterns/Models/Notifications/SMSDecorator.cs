@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OnlineCinemaDesignPatterns.Models.Notifications
+namespace OnlineCinemaDesignPatternsConsole.Models.Notifications
 {
     public class SMSDecorator : INotification
     {

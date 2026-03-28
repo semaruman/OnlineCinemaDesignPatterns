@@ -1,5 +1,5 @@
-﻿using OnlineCinemaDesignPatterns.Models;
-using OnlineCinemaDesignPatterns.Models.Notifications;
+﻿using OnlineCinemaDesignPatternsConsole.Models;
+using OnlineCinemaDesignPatternsConsole.Models.Notifications;
 
 public class Program
 {
