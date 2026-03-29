@@ -20,7 +20,16 @@ SubscribeUser(1, 3);
 // ------
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.MapGet("/", IndexMethod);
 app.MapGet("/serials", GetSerials);
@@ -160,7 +169,7 @@ IResult SubscribeUser(int id, int serialId)
 IResult UnsubscribeUser(int id, int serialId)
 {
     var user = users.FirstOrDefault(x => x.Id == id);
-    var serial = serials.FirstOrDefault(x => x.Id == id);
+    var serial = serials.FirstOrDefault(x => x.Id == serialId);
 
     if (user == null)
     {
