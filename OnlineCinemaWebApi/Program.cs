@@ -20,6 +20,7 @@ SubscribeUser(1, 3);
 // ------
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
