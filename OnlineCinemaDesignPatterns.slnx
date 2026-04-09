@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="OnlineCinemaDesignPatterns/OnlineCinemaDesignPatternsConsole.csproj" />
+  <Project Path="OnlineCinemaWebApi.Tests/OnlineCinemaWebApi.Tests.csproj" Id="3ed1d312-458a-477a-8994-86e60b9f4e91" />
   <Project Path="OnlineCinemaWebApi/OnlineCinemaWebApi.csproj" Id="81515baf-56a1-42a7-bab6-b9415b2e5cfc" />
 </Solution>
