@@ -26,13 +26,16 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", IndexMethod);
+//app.MapGet("/", IndexMethod);
 app.MapGet("/serials", GetSerials);
 app.MapGet("/serials/{id:int}", GetSerialInfo);
 app.MapGet("/serials/{id:int}/subscribers", GetSerialSubscribers);
@@ -196,6 +199,7 @@ IResult AddUser([FromBody] User user)
     }
     else
     {
+        user.Id = users.Last().Id + 1;
         users.Add(user);
         return Results.Ok(new { message = $"Пользователь {user.FullName} добавлен" });
     }

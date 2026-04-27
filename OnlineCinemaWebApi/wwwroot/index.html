@@ -1,0 +1,643 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Online Cinema - Панель управления</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, 'Roboto', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0f1e, #03060c);
+            color: #ece9e0;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+        }
+
+        /* контейнер с киноплёнкой по краям (эффект) */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* шапка как в старом кинотеатре */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 2px solid rgba(255, 193, 7, 0.5);
+            padding-bottom: 1.5rem;
+            position: relative;
+        }
+
+            .header h1 {
+                font-size: 2.8rem;
+                letter-spacing: 4px;
+                background: linear-gradient(135deg, #f5e7b2, #c9a53b);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+                font-weight: 500;
+            }
+
+            .header p {
+                color: #b9b3a0;
+                font-style: italic;
+                margin-top: 8px;
+            }
+
+        /* сетка карточек */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* карточка (секция) */
+        .card {
+            background: rgba(15, 20, 30, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            border: 1px solid rgba(210, 180, 140, 0.3);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s;
+        }
+
+            .card:hover {
+                border-color: rgba(218, 165, 32, 0.6);
+                transform: translateY(-4px);
+            }
+
+        .card-header {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(218, 165, 32, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+            .card-header h2 {
+                font-size: 1.5rem;
+                font-weight: 500;
+                letter-spacing: 1px;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+        .badge-icon {
+            background: #c9a53b;
+            color: #0a0f1e;
+            border-radius: 40px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        /* список сериалов / пользователей */
+        .entity-list {
+            list-style: none;
+            max-height: 260px;
+            overflow-y: auto;
+            margin-bottom: 1.2rem;
+            border-radius: 20px;
+        }
+
+            .entity-list li {
+                background: rgba(0, 0, 0, 0.4);
+                margin: 8px 0;
+                padding: 10px 14px;
+                border-radius: 18px;
+                border-left: 4px solid #c9a53b;
+                font-size: 0.9rem;
+                transition: 0.1s linear;
+                word-break: break-word;
+            }
+
+                .entity-list li strong {
+                    color: #e7c468;
+                }
+
+        /* формы и кнопки */
+        .input-group {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+            .input-group input, .input-group select {
+                flex: 1;
+                background: #1e1f2c;
+                border: 1px solid #3e3f4e;
+                padding: 10px 14px;
+                border-radius: 40px;
+                color: #f0ede8;
+                font-size: 0.9rem;
+                outline: none;
+                transition: 0.2s;
+            }
+
+                .input-group input:focus, .input-group select:focus {
+                    border-color: #e4b85c;
+                    box-shadow: 0 0 5px rgba(228, 184, 92, 0.5);
+                }
+
+        button {
+            background: #2a2418;
+            border: 1px solid #b98f3a;
+            color: #f2e3c9;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+            button.primary {
+                background: #ab822f;
+                border-color: #eac46e;
+                color: #0d0b06;
+                font-weight: bold;
+            }
+
+                button.primary:hover {
+                    background: #c79a3e;
+                    transform: scale(0.97);
+                }
+
+            button:hover {
+                background: #3e3422;
+                border-color: #dbae5a;
+            }
+
+        hr {
+            border-color: #362e1f;
+            margin: 16px 0;
+        }
+
+        .small-text {
+            font-size: 0.75rem;
+            color: #9b927e;
+            margin-top: 6px;
+        }
+
+        .status-msg {
+            background: #0f1119;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            font-family: monospace;
+            margin-top: 12px;
+            color: #b9d68b;
+            border-left: 3px solid #b98f3a;
+        }
+
+        .inline-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .notification-check {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0;
+            background: #0f111c;
+            padding: 10px;
+            border-radius: 40px;
+        }
+
+            .notification-check label {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.8rem;
+            }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px dashed rgba(200, 170, 90, 0.3);
+            font-size: 0.75rem;
+            color: #6a6150;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1d2b;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #b98f3a;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 760px) {
+            body {
+                padding: 1rem;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 ONLINE CINEMA</h1>
+            <p>декораторы уведомлений · подписки в реальном стиле</p>
+        </div>
+
+        <div class="dashboard">
+            <!-- ЛЕВАЯ КОЛОНКА: Сериалы и уведомления -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>📺 Сериалы</h2>
+                    <span class="badge-icon">база данных</span>
+                </div>
+                <div class="card-content">
+                    <button id="refreshSerialsBtn" class="primary" style="width:100%; margin-bottom:14px;">⟳ Обновить список сериалов</button>
+                    <div id="serialsList" class="entity-list">
+                        <li>Загрузка...</li>
+                    </div>
+                    <hr>
+                    <h3 style="font-size:1rem;">➕ Добавить уведомление сериалу</h3>
+                    <div class="input-group">
+                        <input type="number" id="notifySerialId" placeholder="ID сериала" value="1" style="flex:0.8;">
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="notificationText" placeholder="Текст уведомления (новость / трейлер...)" value="Новая серия вышла!">
+                    </div>
+                    <div class="notification-check" id="notificationTypesGroup">
+                        <label><input type="checkbox" value="advert"> Реклама</label>
+                        <label><input type="checkbox" value="email"> Email</label>
+                        <label><input type="checkbox" value="sale"> Скидка</label>
+                        <label><input type="checkbox" value="sms"> SMS</label>
+                        <label><input type="checkbox" value="trailer"> Трейлер</label>
+                    </div>
+                    <div class="inline-buttons">
+                        <button id="sendNotificationBtn" class="primary">📢 Отправить уведомление</button>
+                    </div>
+                    <div id="notifyStatus" class="status-msg"></div>
+                </div>
+            </div>
+
+            <!-- ЦЕНТР/ПРАВО: Пользователи + подписки -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>👥 Пользователи</h2>
+                    <span class="badge-icon">киноманы</span>
+                </div>
+                <div class="card-content">
+                    <button id="refreshUsersBtn" class="primary" style="width:100%; margin-bottom:10px;">⟳ Обновить пользователей</button>
+                    <div id="usersList" class="entity-list">
+                        <li>Загрузка...</li>
+                    </div>
+                    <hr>
+                    <h3>✨ Добавить нового зрителя</h3>
+                    <div class="input-group">
+                        <input type="text" id="newUserName" placeholder="Полное имя (например, Фёдор Достоевский)">
+                        <button id="addUserBtn">➕ Добавить</button>
+                    </div>
+                    <div id="addUserMsg" class="small-text"></div>
+                </div>
+            </div>
+
+            <!-- БЛОК УПРАВЛЕНИЯ ПОДПИСКАМИ (динамический) -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>🔔 Подписки + уведомления пользователя</h2>
+                    <span class="badge-icon">live</span>
+                </div>
+                <div class="card-content">
+                    <div class="input-group">
+                        <input type="number" id="userIdAction" placeholder="ID пользователя" value="1">
+                        <input type="number" id="serialIdAction" placeholder="ID сериала" value="1">
+                    </div>
+                    <div class="inline-buttons">
+                        <button id="subscribeBtn">📌 Подписаться</button>
+                        <button id="unsubscribeBtn">❌ Отписаться</button>
+                    </div>
+                    <div id="subStatus" class="status-msg"></div>
+
+                    <hr>
+                    <div class="input-group">
+                        <input type="number" id="userIdInfo" placeholder="ID пользователя (инфо)" value="1">
+                        <button id="getUserSerialsBtn">📺 Сериалы пользователя</button>
+                        <button id="getUserNotifsBtn">✉️ Уведомления</button>
+                    </div>
+                    <div id="userSerialsResult" class="entity-list" style="max-height:140px; margin-top:10px;">
+                        <li>Нажмите для просмотра сериалов</li>
+                    </div>
+                    <div id="userNotifsResult" class="entity-list" style="max-height:140px;">
+                        <li>Уведомления появятся здесь</li>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- отдельный ряд: Просмотр подписчиков сериала и информации -->
+        <div class="dashboard" style="grid-template-columns: repeat(auto-fit, minmax(300px,1fr));">
+            <div class="card">
+                <div class="card-header"><h2>📋 Инфо о сериале + подписчики</h2></div>
+                <div class="card-content">
+                    <div class="input-group">
+                        <input type="number" id="infoSerialId" placeholder="ID сериала" value="1">
+                        <button id="getSerialInfoBtn">ℹ️ О сериале</button>
+                        <button id="getSubscribersBtn">👥 Подписчики</button>
+                    </div>
+                    <div id="serialInfoBlock" class="status-msg">Здесь будет информация</div>
+                    <div id="subscribersBlock" class="entity-list" style="margin-top:12px;"></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>🧾 Пользователь (по ID)</h2></div>
+                <div class="card-content">
+                    <div class="input-group">
+                        <input type="number" id="singleUserId" placeholder="ID пользователя" value="1">
+                        <button id="getUserInfoBtn">🔍 Показать данные</button>
+                    </div>
+                    <div id="singleUserInfo" class="status-msg">ожидание запроса</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>⚡ Быстрые GET запросы</h2></div>
+                <div class="card-content">
+                    <div class="inline-buttons">
+                        <button id="getAllSerialsShortBtn">📡 Все сериалы</button>
+                        <button id="getAllUsersShortBtn">👥 Все пользователи</button>
+                    </div>
+                    <div id="quickGetResult" class="status-msg" style="margin-top:14px;"></div>
+                </div>
+            </div>
+        </div>
+        <footer>🎞️ Режим кинотеатра · Паттерн Decorator + Observer · все API endpoints интегрированы</footer>
+    </div>
+
+    <script>
+        // Базовый URL (работаем относительно текущего хоста)
+        const API_BASE = '';
+
+        // вспомогательная функция обработки ответов
+        async function handleResponse(response, successMsg) {
+            if (!response.ok) {
+                let errorText = await response.text();
+                try {
+                    const errJson = JSON.parse(errorText);
+                    return { success: false, message: errJson.message || errJson.Error || 'Ошибка сервера' };
+                } catch (e) {
+                    return { success: false, message: `HTTP ${response.status}: ${errorText.substring(0, 100)}` };
+                }
+            }
+            const data = await response.json();
+            return { success: true, data: data, message: successMsg || 'Готово' };
+        }
+
+        // --- Получение сериалов и отрисовка ---
+        async function loadSerials() {
+            const container = document.getElementById('serialsList');
+            container.innerHTML = '<li>Загрузка...</li>';
+            try {
+                const res = await fetch(`${API_BASE}/serials`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data)) {
+                        if (data.length === 0) container.innerHTML = '<li>Сериалы не найдены</li>';
+                        else {
+                            container.innerHTML = data.map(item => `<li><strong>📀 ${item}</strong></li>`).join('');
+                        }
+                    } else {
+                        container.innerHTML = '<li>Неожиданный формат ответа</li>';
+                    }
+                } else {
+                    container.innerHTML = '<li>Ошибка загрузки сериалов</li>';
+                }
+            } catch (e) { container.innerHTML = '<li>Ошибка сети</li>'; }
+        }
+
+        async function loadUsers() {
+            const container = document.getElementById('usersList');
+            container.innerHTML = '<li>Загрузка...</li>';
+            try {
+                const res = await fetch(`${API_BASE}/users`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data)) {
+                        if (data.length === 0) container.innerHTML = '<li>Нет пользователей</li>';
+                        else {
+                            container.innerHTML = data.map(item => `<li>🎭 ${item}</li>`).join('');
+                        }
+                    } else container.innerHTML = '<li>Ошибка данных</li>';
+                } else container.innerHTML = '<li>Ошибка сервера</li>';
+            } catch (e) { container.innerHTML = '<li>Сеть недоступна</li>'; }
+        }
+
+        // Подписка
+        async function subscribeUser(userId, serialId) {
+            const res = await fetch(`${API_BASE}/users/${userId}/subscribe/${serialId}`, { method: 'POST' });
+            const result = await handleResponse(res, 'Подписка выполнена');
+            const msgDiv = document.getElementById('subStatus');
+            if (result.success) msgDiv.innerHTML = `✅ ${result.data.message || 'Успешно'}`;
+            else msgDiv.innerHTML = `❌ ${result.message}`;
+            if (result.success) { loadSerials(); loadUsers(); }
+        }
+
+        async function unsubscribeUser(userId, serialId) {
+            const res = await fetch(`${API_BASE}/users/${userId}/unsubscribe/${serialId}`, { method: 'POST' });
+            const result = await handleResponse(res, 'Отписка выполнена');
+            const msgDiv = document.getElementById('subStatus');
+            if (result.success) msgDiv.innerHTML = `🔄 ${result.data.message || 'Отписались'}`;
+            else msgDiv.innerHTML = `⚠️ ${result.message}`;
+            if (result.success) { loadSerials(); loadUsers(); }
+        }
+
+        // Добавление пользователя
+        async function addUser(fullName) {
+            const res = await fetch(`${API_BASE}/users/add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: 0, fullName: fullName }) // id сгенерирует логика (в модели сетевое)
+            });
+            const result = await handleResponse(res, 'Пользователь добавлен');
+            const msgDiv = document.getElementById('addUserMsg');
+            if (result.success) {
+                msgDiv.innerHTML = `✔️ ${result.data.message}`;
+                loadUsers();
+                document.getElementById('newUserName').value = '';
+            } else msgDiv.innerHTML = `❌ ${result.message}`;
+        }
+
+        // уведомление с декораторами
+        async function sendNotification(serialId, text, types) {
+            if (!serialId || isNaN(serialId)) return alert('Введите ID сериала');
+            if (!text.trim()) return alert('Введите текст уведомления');
+            const payload = {
+                notificationTypes: types,
+                text: text
+            };
+            const res = await fetch(`${API_BASE}/serials/${serialId}/addnotification`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await handleResponse(res, 'Уведомление отправлено');
+            const statusDiv = document.getElementById('notifyStatus');
+            if (result.success) statusDiv.innerHTML = `🎬 ${result.data.message}`;
+            else statusDiv.innerHTML = `🔥 Ошибка: ${result.message}`;
+        }
+
+        async function getUserSerials(userId) {
+            const res = await fetch(`${API_BASE}/users/${userId}/serials`);
+            const result = await handleResponse(res);
+            const container = document.getElementById('userSerialsResult');
+            if (result.success && Array.isArray(result.data)) {
+                if (result.data.length === 0) container.innerHTML = '<li>📭 Нет подписок на сериалы</li>';
+                else container.innerHTML = result.data.map(s => `<li>🎞️ ${s}</li>`).join('');
+            } else {
+                container.innerHTML = `<li>⚠️ ${result.message || 'Не удалось загрузить'}</li>`;
+            }
+        }
+
+        async function getUserNotifications(userId) {
+            const res = await fetch(`${API_BASE}/users/${userId}/notifications`);
+            const result = await handleResponse(res);
+            const container = document.getElementById('userNotifsResult');
+            if (result.success && Array.isArray(result.data)) {
+                if (result.data.length === 0) container.innerHTML = '<li>📪 Уведомлений пока нет</li>';
+                else container.innerHTML = result.data.map(notif => `<li>📨 ${notif}</li>`).join('');
+            } else {
+                container.innerHTML = `<li>❗ ${result.message || 'Ошибка уведомлений'}</li>`;
+            }
+        }
+
+        async function getSerialInfo(id) {
+            const res = await fetch(`${API_BASE}/serials/${id}`);
+            const result = await handleResponse(res);
+            const div = document.getElementById('serialInfoBlock');
+            if (result.success && result.data.message) div.innerHTML = `ℹ️ ${result.data.message}`;
+            else div.innerHTML = `❗ ${result.message || 'Сериал не найден'}`;
+        }
+
+        async function getSerialSubscribers(id) {
+            const res = await fetch(`${API_BASE}/serials/${id}/subscribers`);
+            const result = await handleResponse(res);
+            const container = document.getElementById('subscribersBlock');
+            if (result.success && Array.isArray(result.data)) {
+                if (result.data.length === 0) container.innerHTML = '<li>Нет подписчиков</li>';
+                else container.innerHTML = result.data.map(u => `<li>👤 ${u}</li>`).join('');
+            } else container.innerHTML = `<li>❌ ${result.message}</li>`;
+        }
+
+        async function getUserInfoById(id) {
+            const res = await fetch(`${API_BASE}/users/${id}`);
+            const result = await handleResponse(res);
+            const div = document.getElementById('singleUserInfo');
+            if (result.success && result.data.message) div.innerHTML = `🧑 ${result.data.message}`;
+            else div.innerHTML = `⚠️ ${result.message || 'Пользователь не найден'}`;
+        }
+
+        async function getAllSerialsRaw() {
+            const res = await fetch(`${API_BASE}/serials`);
+            const result = await handleResponse(res);
+            const div = document.getElementById('quickGetResult');
+            if (result.success && Array.isArray(result.data)) {
+                if (result.data.length) div.innerHTML = `📺 Сериалы: ${result.data.slice(0, 4).join(' | ')}${result.data.length > 4 ? ' ...' : ''}`;
+                else div.innerHTML = 'нет сериалов';
+            } else div.innerHTML = `Ошибка: ${result.message}`;
+        }
+
+        async function getAllUsersRaw() {
+            const res = await fetch(`${API_BASE}/users`);
+            const result = await handleResponse(res);
+            const div = document.getElementById('quickGetResult');
+            if (result.success && Array.isArray(result.data)) {
+                if (result.data.length) div.innerHTML = `👥 Пользователи: ${result.data.slice(0, 4).join(' | ')}`;
+                else div.innerHTML = 'пользователей нет';
+            } else div.innerHTML = `Ошибка: ${result.message}`;
+        }
+
+        // обработчики событий
+        document.getElementById('refreshSerialsBtn').addEventListener('click', loadSerials);
+        document.getElementById('refreshUsersBtn').addEventListener('click', loadUsers);
+        document.getElementById('subscribeBtn').addEventListener('click', () => {
+            const uid = parseInt(document.getElementById('userIdAction').value);
+            const sid = parseInt(document.getElementById('serialIdAction').value);
+            if (isNaN(uid) || isNaN(sid)) alert('ID должны быть числами');
+            else subscribeUser(uid, sid);
+        });
+        document.getElementById('unsubscribeBtn').addEventListener('click', () => {
+            const uid = parseInt(document.getElementById('userIdAction').value);
+            const sid = parseInt(document.getElementById('serialIdAction').value);
+            if (isNaN(uid) || isNaN(sid)) alert('ID должны быть числами');
+            else unsubscribeUser(uid, sid);
+        });
+        document.getElementById('addUserBtn').addEventListener('click', () => {
+            const name = document.getElementById('newUserName').value.trim();
+            if (!name) alert('Введите имя');
+            else addUser(name);
+        });
+        document.getElementById('sendNotificationBtn').addEventListener('click', () => {
+            const serialId = parseInt(document.getElementById('notifySerialId').value);
+            const text = document.getElementById('notificationText').value;
+            const checkboxes = document.querySelectorAll('#notificationTypesGroup input[type="checkbox"]:checked');
+            const types = Array.from(checkboxes).map(cb => cb.value);
+            if (types.length === 0) alert('Выберите хотя бы один тип уведомления (advert, email, sale, sms, trailer)');
+            else sendNotification(serialId, text, types);
+        });
+        document.getElementById('getUserSerialsBtn').addEventListener('click', () => {
+            const uid = parseInt(document.getElementById('userIdInfo').value);
+            if (!isNaN(uid)) getUserSerials(uid); else alert('введите id');
+        });
+        document.getElementById('getUserNotifsBtn').addEventListener('click', () => {
+            const uid = parseInt(document.getElementById('userIdInfo').value);
+            if (!isNaN(uid)) getUserNotifications(uid);
+        });
+        document.getElementById('getSerialInfoBtn').addEventListener('click', () => {
+            const sid = parseInt(document.getElementById('infoSerialId').value);
+            if (!isNaN(sid)) getSerialInfo(sid);
+        });
+        document.getElementById('getSubscribersBtn').addEventListener('click', () => {
+            const sid = parseInt(document.getElementById('infoSerialId').value);
+            if (!isNaN(sid)) getSerialSubscribers(sid);
+        });
+        document.getElementById('getUserInfoBtn').addEventListener('click', () => {
+            const uid = parseInt(document.getElementById('singleUserId').value);
+            if (!isNaN(uid)) getUserInfoById(uid);
+        });
+        document.getElementById('getAllSerialsShortBtn').addEventListener('click', getAllSerialsRaw);
+        document.getElementById('getAllUsersShortBtn').addEventListener('click', getAllUsersRaw);
+
+        // начальная загрузка
+        loadSerials();
+        loadUsers();
+    </script>
+</body>
+</html>
